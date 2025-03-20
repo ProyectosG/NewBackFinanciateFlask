@@ -5,7 +5,9 @@ from src.models.Ingresos import Ingreso
 from src.models.Egresos import Egreso
 from src import db
 from marshmallow import ValidationError
-from src.schemas import usuario_schema
+from src.schemas.usuario_schema import UsuarioSchema
+
+
 
 
 #Definios el blueprint para usuarios
@@ -16,7 +18,8 @@ usuarios_bp = Blueprint('usuarios',__name__,url_prefix= '/api/usuarios')
 def signup():
 
     try:
-        data = usuario_schema().load(request.get_json())
+       usuario_schema = UsuarioSchema()  # Instancia de la clase
+       data = usuario_schema.load(request.get_json())  # Carga y valida los datos
     except ValidationError as err:
         return jsonify(err.messages), 400   
        
