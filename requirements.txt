@@ -3,3 +3,4 @@ gunicorn
 python-dotenv
 Flask-SQLAlchemy
 Flask-Migrate
+Flask-JWT-Extended
