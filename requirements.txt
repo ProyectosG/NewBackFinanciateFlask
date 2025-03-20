@@ -6,3 +6,4 @@ Flask-Migrate
 Flask-JWT-Extended
 Flask-CORS
 psycopg2
+marshmallow
