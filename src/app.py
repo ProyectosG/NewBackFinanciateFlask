@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
-import os
 
 # Instanciamos la base de datos y las migraciones
 db = SQLAlchemy()
@@ -34,7 +33,7 @@ def create_app():
     from src.models.Suscripciones import Suscripcion
     
     # Registrar los blueprints
-    from .resources.auth import auth_bp
-    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    from src.resources.usuarios import usuarios_bp
+    app.register_blueprint(usuarios_bp)
 
     return app

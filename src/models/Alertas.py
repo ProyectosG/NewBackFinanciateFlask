@@ -10,5 +10,4 @@ class Alerta(db.Model):
     creada_en = db.Column(db.DateTime, default=datetime.utcnow)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
 
-    # Relación inversa con Usuario
-    usuario = db.relationship('Usuario', backref='alertas', lazy=True)
+
