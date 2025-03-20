@@ -37,7 +37,7 @@ def create_app():
     # Registrar los blueprints
     from src.resources.usuarios import usuarios_bp
     app.register_blueprint(usuarios_bp)
-     # Aplicar CORS a cada blueprint
-    CORS(usuarios_bp, origins=["https://reliable-sorbet-07d22a.netlify.app"], supports_credentials=True)
+
+
 
     return app
