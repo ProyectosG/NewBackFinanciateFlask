@@ -20,7 +20,9 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    CORS(app)  # Permitir solicitudes de todos los orígenes
+    #CORS(app)  # Permitir solicitudes de todos los orígenes
+    CORS(app, origins=["https://reliable-sorbet-07d22a.netlify.app"], supports_credentials=True)
+
 
     # Importar los modelos (esto es clave)
     from src.models.Usuarios import Usuario
@@ -35,5 +37,7 @@ def create_app():
     # Registrar los blueprints
     from src.resources.usuarios import usuarios_bp
     app.register_blueprint(usuarios_bp)
+     # Aplicar CORS a cada blueprint
+    CORS(usuarios_bp, origins=["https://reliable-sorbet-07d22a.netlify.app"], supports_credentials=True)
 
     return app

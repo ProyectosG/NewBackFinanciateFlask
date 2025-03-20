@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_cors import cross_origin
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from src.models.Usuarios import Usuario
 from src.models.Ingresos import Ingreso
@@ -15,6 +16,7 @@ usuarios_bp = Blueprint('usuarios',__name__,url_prefix= '/api/usuarios')
 
 # CRUD para Usuario
 @usuarios_bp.route('/signup',methods=['POST'])
+@cross_origin(origins=["https://reliable-sorbet-07d22a.netlify.app"])  # Asegurar CORS aquí también
 def signup():
 
     try:
