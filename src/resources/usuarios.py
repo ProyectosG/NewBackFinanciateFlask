@@ -115,10 +115,10 @@ def obtener_usuarios():
 @usuarios_bp.route('/config-inicial', methods=['PUT'])
 @jwt_required()
 def actualizar_usuario():
-    usuario_id = get_jwt_identity()  # Obtiene el ID del usuario autenticado desde el token
+    #usuario_id = get_jwt_identity()  # Obtiene el ID del usuario autenticado desde el token
     #usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
 
-    data = request.get_json()
+    #data = request.get_json()
     
     # if 'correo' in data:
     #     usuario.correo = data['correo']
@@ -131,7 +131,7 @@ def actualizar_usuario():
     #     usuario.moneda = data['moneda']
 
    # db.session.commit()
-    return jsonify({'mensasg': 'Usuario actualizado exitosamente'}), 200
+    return jsonify({'msg': 'Usuario actualizado exitosamente'}), 200
 
 # -----------------------------------------
 # OBTENER UN USUARIO ESPECÍFICO POR ID
