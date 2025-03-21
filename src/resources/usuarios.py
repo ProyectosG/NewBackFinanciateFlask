@@ -70,9 +70,9 @@ def login():
     # Verificar si el usuario existe y si la contraseña es correcta
     #if usuario and usuario.verificar_contrasena(data['contrasena']):  
         # Crear el token JWT con la identidad del usuario
-        access_token = create_access_token(identity=1)
+        #access_token = create_access_token(identity=1)
         
-        return jsonify({"access_token": access_token}), 200  # Retornar el token JWT
+        return jsonify({"access_token": "access_token"}), 200  # Retornar el token JWT
  
  
         # Convertir el usuario a diccionario si necesitas enviarlo en la respuesta
