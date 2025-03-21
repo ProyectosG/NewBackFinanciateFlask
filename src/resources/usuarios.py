@@ -119,7 +119,6 @@ def actualizar_usuario():
     #usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
 
     data = request.get_json()
-    logging.debug("📌 Datos recibidos en /config-inicial:", data)
     
     # if 'correo' in data:
     #     usuario.correo = data['correo']
@@ -132,7 +131,7 @@ def actualizar_usuario():
     #     usuario.moneda = data['moneda']
 
    # db.session.commit()
-    return jsonify({'msg': 'Usuario actualizado exitosamente'}), 200
+    return jsonify({'mensasg': 'Usuario actualizado exitosamente'}), 200
 
 # -----------------------------------------
 # OBTENER UN USUARIO ESPECÍFICO POR ID
