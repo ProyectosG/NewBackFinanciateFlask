@@ -18,8 +18,8 @@ usuarios_bp = Blueprint('usuarios',__name__,url_prefix= '/api/usuarios')
 def signup():
 
     try:
-       usuario_schema = UsuarioSchema()  # Instancia de la clase
-       data = usuario_schema.load(request.get_json())  # Carga y valida los datos
+       
+       data = request.get_json()  # Carga y valida los datos
     except ValidationError as err:
         print (err.messages)
         return jsonify(err.messages), 400   
