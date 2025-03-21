@@ -7,6 +7,10 @@ from src import db
 from datetime import timedelta
 from marshmallow import ValidationError
 from src.schemas.usuario_schema import UsuarioSchema
+import logging
+
+# Configurar logging
+logging.basicConfig(level=logging.DEBUG)
 
 
 #Definios el blueprint para usuarios
@@ -115,6 +119,7 @@ def actualizar_usuario():
     usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
 
     data = request.get_json()
+    logging.debug("📌 Datos recibidos en /config-inicial:", data)
     
     if 'correo' in data:
         usuario.correo = data['correo']
