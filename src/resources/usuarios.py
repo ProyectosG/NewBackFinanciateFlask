@@ -64,6 +64,23 @@ def login():
     # Validar si los datos necesarios están presentes
     if not data or 'correo' not in data or 'contrasena' not in data:
         return jsonify({"message": "Faltan datos requeridos"}), 400
+    
+    # Simulando un usuario ficticio (reemplaza este código con lógica real si es necesario)
+    usuario_ficticio = {
+        "id": 1,
+        "nombre_usuario": "Juan Perez",
+        "correo": data['correo'],
+        "capital_inicial": 1000.00,
+        "moneda": "USD"
+    }
+    
+    # Simulando un token ficticio (esto debería ser generado de manera segura en un entorno real)
+    access_token = "fake_jwt_token_1234567890"
+    
+    return jsonify({
+        "token": access_token,
+        "usuario": usuario_ficticio
+    }), 200
 
     #usuario = Usuario.query.filter_by(correo=data['correo']).first()  # Buscar el usuario por correo
 
@@ -72,18 +89,17 @@ def login():
         # Crear el token JWT con la identidad del usuario
         #access_token = create_access_token(identity=1)
         
-        return jsonify({"access_token": "access_token"}), 200  # Retornar el token JWT
  
  
         # Convertir el usuario a diccionario si necesitas enviarlo en la respuesta
-        usuario_dict = usuario.to_dict()  
+        # usuario_dict = usuario.to_dict()  
 
-        return jsonify({
-            "access_token": access_token,
-            "usuario": usuario_dict
-        }), 200  # Retornar el token JWT y datos del usuario
+        # return jsonify({
+        #     "access_token": access_token,
+        #     "usuario": usuario_dict
+        # }), 200  # Retornar el token JWT y datos del usuario
 
-    return jsonify({"message": "Correo o contraseña incorrectos"}), 401
+    # return jsonify({"message": "Correo o contraseña incorrectos"}), 401
     
 
 # -----------------------------------------
