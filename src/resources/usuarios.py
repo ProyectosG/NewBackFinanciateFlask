@@ -80,7 +80,7 @@ def login():
 
         # 7️⃣ Retornar el token y los datos del usuario
         return jsonify({
-            "access_token": access_token,
+            "token": access_token,
             "usuario": usuario_dict
         }), 200  
 
