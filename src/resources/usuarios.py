@@ -65,10 +65,11 @@ def login():
     if not data or 'correo' not in data or 'contrasena' not in data:
         return jsonify({"message": "Faltan datos requeridos"}), 400
     
+    usuario = Usuario.query.filter_by(correo=data['correo']).first()  # Buscar el usuario por correo
     # Simulando un usuario ficticio (reemplaza este código con lógica real si es necesario)
     usuario_ficticio = {
         "id": 1,
-        "nombre_usuario": "Juan Perez",
+        "nombre_usuario": usuario.nombre_usuario,
         "correo": data['correo'],
         "capital_inicial": 1000.00,
         "moneda": "USD"
@@ -82,7 +83,6 @@ def login():
         "usuario": usuario_ficticio
     }), 200
 
-    #usuario = Usuario.query.filter_by(correo=data['correo']).first()  # Buscar el usuario por correo
 
     # Verificar si el usuario existe y si la contraseña es correcta
     #if usuario and usuario.verificar_contrasena(data['contrasena']):  
