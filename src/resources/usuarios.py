@@ -4,6 +4,7 @@ from src.models.Usuarios import Usuario
 from src.models.Ingresos import Ingreso
 from src.models.Egresos import Egreso
 from src import db
+from datetime import timedelta
 from marshmallow import ValidationError
 from src.schemas.usuario_schema import UsuarioSchema
 
@@ -55,51 +56,38 @@ def get_usuarios():
 
 #-------------------------------
 
-# Ruta para login (POST)
+
 @usuarios_bp.route('/login', methods=['POST'])
 def login():
-    # Obtener las credenciales del usuario (correo y contraseña)
+    # 1️⃣ Obtener datos del cuerpo de la solicitud
     data = request.get_json()
-    
-    # Validar si los datos necesarios están presentes
+
+    # 2️⃣ Validar si los datos requeridos están presentes
     if not data or 'correo' not in data or 'contrasena' not in data:
         return jsonify({"message": "Faltan datos requeridos"}), 400
-    
-    usuario = Usuario.query.filter_by(correo=data['correo']).first()  # Buscar el usuario por correo
-    # Simulando un usuario ficticio (reemplaza este código con lógica real si es necesario)
-    usuario_ficticio = {
-        "id": 1,
-        "nombre_usuario": usuario.nombre_usuario,
-        "correo": data['correo'],
-        "capital_inicial": 1000.00,
-        "moneda": "USD"
-    }
-    
-    # Simulando un token ficticio (esto debería ser generado de manera segura en un entorno real)
-    access_token = "fake_jwt_token_1234567890"
-    
-    return jsonify({
-        "token": access_token,
-        "usuario": usuario_ficticio
-    }), 200
 
+    # 3️⃣ Buscar el usuario en la base de datos
+    usuario = Usuario.query.filter_by(correo=data['correo']).first()
 
-    # Verificar si el usuario existe y si la contraseña es correcta
-    #if usuario and usuario.verificar_contrasena(data['contrasena']):  
-        # Crear el token JWT con la identidad del usuario
-        #access_token = create_access_token(identity=1)
+    # 4️⃣ Verificar si el usuario existe y si la contraseña es correcta
+    if usuario and usuario.verificar_contrasena(data['contrasena']):  
         
- 
- 
-        # Convertir el usuario a diccionario si necesitas enviarlo en la respuesta
-        # usuario_dict = usuario.to_dict()  
+        # 5️⃣ Crear el token JWT con la identidad del usuario (ID)
+        access_token = create_access_token(identity=usuario.id, expires_delta=timedelta(hours=1))
 
-        # return jsonify({
-        #     "access_token": access_token,
-        #     "usuario": usuario_dict
-        # }), 200  # Retornar el token JWT y datos del usuario
+        # 6️⃣ Convertir el usuario a diccionario
+        usuario_dict = usuario.to_dict()
 
-    # return jsonify({"message": "Correo o contraseña incorrectos"}), 401
+        # 7️⃣ Retornar el token y los datos del usuario
+        return jsonify({
+            "access_token": access_token,
+            "usuario": usuario_dict
+        }), 200  
+
+    # 8️⃣ Si las credenciales son incorrectas, retornar error
+    return jsonify({"message": "Correo o contraseña incorrectos"}), 401
+
+#
     
 
 # -----------------------------------------
