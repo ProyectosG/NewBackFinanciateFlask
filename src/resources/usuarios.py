@@ -116,7 +116,7 @@ def obtener_usuarios():
 @jwt_required()
 def actualizar_usuario():
     usuario_id = get_jwt_identity()  # Obtiene el ID del usuario autenticado desde el token
-    usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
+    #usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
 
     data = request.get_json()
     logging.debug("📌 Datos recibidos en /config-inicial:", data)
@@ -131,7 +131,7 @@ def actualizar_usuario():
     # if 'moneda' in data:
     #     usuario.moneda = data['moneda']
 
-    db.session.commit()
+   # db.session.commit()
     return jsonify({'msg': 'Usuario actualizado exitosamente'}), 200
 
 # -----------------------------------------
