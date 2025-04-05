@@ -119,6 +119,7 @@ def actualizar_usuario():
     usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
 
     data = request.get_json()
+    return jsonify({"mensajito": "REGRESO TECXTO XYZ"}), 200
     print("Datos recibidos:", data)  # Verifica los datos recibidos
 
     # Verifica si se han enviado datos válidos
