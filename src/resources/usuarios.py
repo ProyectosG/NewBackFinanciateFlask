@@ -77,7 +77,7 @@ def login():
     if usuario and usuario.verificar_contrasena(data['contrasena']):  
         
         # 5️⃣ Crear el token JWT con la identidad del usuario (ID)
-        access_token = create_access_token(identity=usuario.id, expires_delta=timedelta(hours=1))
+        access_token = create_access_token(identity=str(usuario.id), expires_delta=timedelta(hours=1))
 
         # 6️⃣ Convertir el usuario a diccionario
         usuario_dict = usuario.to_dict()
@@ -113,15 +113,13 @@ def obtener_usuarios():
 # ACTUALIZAR USUARIO AUTENTICADO
 # -----------------------------------------
 @usuarios_bp.route('/config-inicial', methods=['PUT'])
-#@jwt_required()
+@jwt_required()
 def actualizar_usuario():
-    #usuario_id = get_jwt_identity()  # Obtiene el ID del usuario autenticado desde el token
-    #usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
+    usuario_id = get_jwt_identity()  # Obtiene el ID del usuario autenticado desde el token
+    usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
 
-    #data = request.get_json()
-    return jsonify({"mensajito": "REGRESO TECXTO XYZ"}), 200
-    print("Datos recibidos:", data)  # Verifica los datos recibidos
-
+    data = request.get_json()
+   
     # Verifica si se han enviado datos válidos
     if not data:
         return jsonify({"error": "No se enviaron datos en la solicitud"}), 400
