@@ -113,7 +113,7 @@ def obtener_usuarios():
 # ACTUALIZAR USUARIO AUTENTICADO
 # -----------------------------------------
 @usuarios_bp.route('/config-inicial', methods=['PUT'])
-#@jwt_required()
+@jwt_required()
 def actualizar_usuario():
     usuario_id = get_jwt_identity()  # Obtiene el ID del usuario autenticado desde el token
     usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
