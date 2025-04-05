@@ -120,14 +120,14 @@ def actualizar_usuario():
 
     data = request.get_json()
     
-     if 'correo' in data:
+    if 'correo' in data:
          usuario.correo = data['correo']
         
-     if 'capital_inicial' in data:
+    if 'capital_inicial' in data:
          usuario.capital_inicial = data['capital_inicial']
          usuario.capital_actual = data['capital_inicial']
 
-     if 'moneda' in data:
+    if 'moneda' in data:
          usuario.moneda = data['moneda']
 
     db.session.commit()
