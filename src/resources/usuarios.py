@@ -119,13 +119,19 @@ def actualizar_usuario():
     usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
 
     data = request.get_json()
+    print("Datos recibidos:", data)  # Imprime los datos recibidos
+    print(usuario)
     
     if 'correo' in data:
          usuario.correo = data['correo']
         
     if 'capital_inicial' in data:
-         usuario.capital_inicial = data['capital_inicial']
-         usuario.capital_actual = data['capital_inicial']
+        try:
+            usuario.capital_inicial = float(data['capital_inicial'])  # Asegúrate de que sea un número
+            usuario.capital_actual = float(data['capital_inicial'])
+        except ValueError:
+            return jsonify({"error": "capital_inicial debe ser un número válido"}), 422
+
 
     if 'moneda' in data:
          usuario.moneda = data['moneda']
