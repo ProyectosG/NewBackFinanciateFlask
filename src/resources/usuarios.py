@@ -124,20 +124,23 @@ def actualizar_usuario():
     # Verifica si se han enviado datos válidos
     if not data:
         return jsonify({"error": "No se enviaron datos en la solicitud"}), 400
-
     if 'correo' in data:
+        if not isinstance(data['correo'], str):
+            return jsonify({"msg": "correo debe ser una cadena de texto"}), 422
         usuario.correo = data['correo']
-        
+
     if 'capital_inicial' in data:
         try:
-            # Asegúrate de que sea un número válido
-            usuario.capital_inicial = float(data['capital_inicial'])
+            usuario.capital_inicial = float(data['capital_inicial'])  # Asegúrate de que sea un número
             usuario.capital_actual = float(data['capital_inicial'])
         except ValueError:
             return jsonify({"error": "capital_inicial debe ser un número válido"}), 422
 
     if 'moneda' in data:
+        if not isinstance(data['moneda'], str):
+            return jsonify({"msg": "moneda debe ser una cadena de texto"}), 422
         usuario.moneda = data['moneda']
+
 
     db.session.commit()
     return jsonify({'mimensaje': "Usuario actualizado exitosamente"}), 200
