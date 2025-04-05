@@ -119,25 +119,29 @@ def actualizar_usuario():
     usuario = Usuario.query.get_or_404(usuario_id)  # Si no existe, devuelve un error 404
 
     data = request.get_json()
-    print("Datos recibidos:", data)  # Imprime los datos recibidos
-    print(usuario)
-    
+    print("Datos recibidos:", data)  # Verifica los datos recibidos
+
+    # Verifica si se han enviado datos válidos
+    if not data:
+        return jsonify({"error": "No se enviaron datos en la solicitud"}), 400
+
     if 'correo' in data:
-         usuario.correo = data['correo']
+        usuario.correo = data['correo']
         
     if 'capital_inicial' in data:
         try:
-            usuario.capital_inicial = float(data['capital_inicial'])  # Asegúrate de que sea un número
+            # Asegúrate de que sea un número válido
+            usuario.capital_inicial = float(data['capital_inicial'])
             usuario.capital_actual = float(data['capital_inicial'])
         except ValueError:
             return jsonify({"error": "capital_inicial debe ser un número válido"}), 422
 
-
     if 'moneda' in data:
-         usuario.moneda = data['moneda']
+        usuario.moneda = data['moneda']
 
     db.session.commit()
     return jsonify({'mimensaje': "Usuario actualizado exitosamente"}), 200
+
 
 # -----------------------------------------
 # OBTENER UN USUARIO ESPECÍFICO POR ID
