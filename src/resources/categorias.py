@@ -1,190 +1,133 @@
-# api/routes/categorias.py
+# src/resources/categorias.py
+
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.models import db, Categoria, Ingreso, Egreso
-from .default_categories import default_categories
 from src.schemas.categoria_schema import CategoriaSchema
+from .default_categories import default_categories
 from sqlalchemy import exists
-import logging
 
-# Configurar logging
-logging.basicConfig(level=logging.DEBUG)
+categorias_bp = Blueprint('categorias', __name__, url_prefix='/api/categorias')
 
-#Definios el blueprint para cate
-categorias_bp = Blueprint('categorias',__name__,url_prefix= '/api/categorias')
+categoria_schema = CategoriaSchema()
+categorias_schema = CategoriaSchema(many=True)
 
+# GET: Traer todas las categorías (default + del usuario)
 @categorias_bp.route('/traertodas', methods=['GET'])
-@jwt_required()  # Requiere autenticación
+@jwt_required()
 def listar_categorias():
-    current_user_id = get_jwt_identity()  # Obtiene el ID del usuario autenticado desde el token
-    # Ordeno categorías por 'nombre' de forma ascendente
-    default_categories = Categoria.query.filter_by(is_default=True).all()
-    user_categories = Categoria.query.filter_by(user_id=current_user_id).all()
-    all_categories = default_categories + user_categories
-     # Ordenar por el atributo 'nombre' (de forma ascendente)
-    sorted_categories = sorted(all_categories, key=lambda c: c.nombre)
+    user_id = get_jwt_identity()
+    default = Categoria.query.filter_by(is_default=True).all()
+    personales = Categoria.query.filter_by(user_id=user_id).all()
+    all_categorias = sorted(default + personales, key=lambda c: c.nombre)
+    return categorias_schema.jsonify(all_categorias), 200
 
-    return jsonify([{
-        'id': e.id,
-        'nombre': e.nombre,
-        'icono':e.icono,
-        'is_default': e.is_default,
-    } for e in sorted_categories]), 200
-
-
-
-#----------------------------------------------------
-# Ruta para crear una nueva categoría
+# POST: Crear nueva categoría
 @categorias_bp.route('/categoria', methods=['POST'])
-@jwt_required()  # Requiere autenticación
-def crear_categoria(payload):
-     # El 'id' del usuario ya está disponible a través de 'payload'
-    usuario_id = payload.get('id')  # Acceder al 'id' del usuario
+@jwt_required()
+def crear_categoria():
+    user_id = get_jwt_identity()
+    data = request.get_json()
 
-    # Verificar que el usuario_id esté presente en el payload
-    if not usuario_id:
-        return jsonify({"error": "Usuario no autenticado"}), 401
-    
-    data = request.get_json()  # Obtener los datos enviados en el cuerpo de la solicitud
-    # Validar que los datos necesarios estén presentes
-    if not data or 'nombre' not in data:
-        return jsonify({'msg': 'El nombre de la categoría es obligatorio'}), 400
+    if not data or 'nombre' not in data or 'icono' not in data:
+        return jsonify({'error': 'Campos requeridos: nombre, icono'}), 400
 
-    # Verificar si ya existe una categoría con el mismo nombre
-    
-    #if Categoria.query.filter_by(nombre=data['nombre']).first():
-    if db.session.query(exists().where(Categoria.nombre == data['nombre'] )).scalar():
-        return jsonify({'msg': 'La categoría ya existe'}), 400
+    if Categoria.query.filter_by(nombre=data['nombre'], user_id=user_id).first():
+        return jsonify({'error': 'La categoría ya existe'}), 400
 
-    # Crear la nueva categoría
     nueva_categoria = Categoria(
         nombre=data['nombre'],
-        icono = data['icono'],
-        user_id= usuario_id,
-        is_default= False,
+        icono=data['icono'],
+        user_id=user_id,
+        is_default=False
     )
-    
-    # Agregarla a la base de datos
     db.session.add(nueva_categoria)
     db.session.commit()
+    return categoria_schema.jsonify(nueva_categoria), 201
 
-    # Retornar el ID de la nueva categoría
-    return jsonify({'msg': 'Categoría creada exitosamente', 'id': nueva_categoria.id,"nombre":nueva_categoria.nombre,"icono":nueva_categoria.icono}), 201
-
-
-#---------------------------------------------------
+# DELETE: Eliminar una categoría
 @categorias_bp.route('/categoria', methods=['DELETE'])
-@jwt_required()  # Requiere autenticación
-def eliminar_categoria(payload):
-    # Verificar si la categoría existe
+@jwt_required()
+def eliminar_categoria():
     data = request.get_json()
-    id= data['id'] 
-    categoria = Categoria.query.get(id)
-    
+    categoria_id = data.get('id')
+    categoria = Categoria.query.get(categoria_id)
+
     if not categoria:
-        return jsonify({"error": "Categoría no encontrada"}), 404
+        return jsonify({'error': 'Categoría no encontrada'}), 404
 
-    # Verificar si la categoría está relacionada con algún ingreso o egreso
-    ingresos_relacionados = Ingreso.query.filter_by(categoria_id=id).count()
-    egresos_relacionados = Egreso.query.filter_by(categoria_id=id).count()
+    if categoria.is_default:
+        return jsonify({'error': 'No se puede eliminar una categoría por defecto'}), 400
 
-    if ingresos_relacionados > 0 or egresos_relacionados > 0:
-            return jsonify({
-                "error": "La categoría está relacionada con ingresos o egresos.",
-                "details": {
-                    "ingresos_relacionados": ingresos_relacionados,
-                    "egresos_relacionados": egresos_relacionados
-                }
-            }), 400
+    ingresos = Ingreso.query.filter_by(categoria_id=categoria_id).count()
+    egresos = Egreso.query.filter_by(categoria_id=categoria_id).count()
 
-    # Eliminar la categoría si no está relacionada
+    if ingresos > 0 or egresos > 0:
+        return jsonify({
+            'error': 'La categoría está relacionada con movimientos',
+            'detalles': {
+                'ingresos': ingresos,
+                'egresos': egresos
+            }
+        }), 400
+
     db.session.delete(categoria)
     db.session.commit()
+    return jsonify({'msg': 'Categoría eliminada correctamente'}), 200
 
-    return jsonify({"message": "Categoría eliminada correctamente"}), 200
-
-#----------------------------------------------------
+# DELETE: Eliminar todas las categorías del usuario (si no están relacionadas)
 @categorias_bp.route('/eliminartodas', methods=['DELETE'])
-@jwt_required()  # Requiere autenticación
-def eliminar_todas_las_categorias(payload):
-    try:
-        # Obtener todas las categorías no predeterminadas (is_default=False)
-        categorias = Categoria.query.filter_by(is_default=False).all()
+@jwt_required()
+def eliminar_todas_las_categorias():
+    user_id = get_jwt_identity()
+    categorias = Categoria.query.filter_by(user_id=user_id).all()
 
-        if not categorias:
-            return jsonify({"message": "No hay categorías para eliminar."}), 200
+    if not categorias:
+        return jsonify({'msg': 'No hay categorías para eliminar'}), 200
 
-        print("aqaui")
-        # Filtrar las categorías no comprometidas
-        categorias_no_comprometidas = []
-        categorias_comprometidas = []
+    no_usadas = []
+    usadas = []
 
-        for categoria in categorias:
-            # Verificar si la categoría tiene ingresos o egresos relacionados
-            ingresos_relacionados = Ingreso.query.filter_by(categoria_id=categoria.id).count()
-            egresos_relacionados = Egreso.query.filter_by(categoria_id=categoria.id).count()
+    for cat in categorias:
+        ingresos = Ingreso.query.filter_by(categoria_id=cat.id).count()
+        egresos = Egreso.query.filter_by(categoria_id=cat.id).count()
 
-            # Si no tiene ingresos ni egresos, se agrega a las categorías no comprometidas
-            if ingresos_relacionados == 0 and egresos_relacionados == 0:
-                categorias_no_comprometidas.append(categoria)
-            else:
-                categorias_comprometidas.append({
-                    "id": categoria.id,
-                    "nombre": categoria.nombre,
-                    "ingresos_relacionados": ingresos_relacionados,
-                    "egresos_relacionados": egresos_relacionados
-                })
-
-        # Solo eliminar las categorías que no son predeterminadas y que no tienen ingresos ni egresos relacionados
-        if categorias_no_comprometidas:
-            for categoria in categorias_no_comprometidas:
-                db.session.delete(categoria)
-
-            db.session.commit()
-
-            # Verificar si la tabla está vacía
-            categorias_count = db.session.execute('SELECT COUNT(*) FROM categorias').scalar()
-            if categorias_count == 0:
-                db.session.execute('ALTER SEQUENCE categorias_id_seq RESTART WITH 1;')
-                db.session.commit()
-
-            print("llegue aqui")
-            return jsonify({
-                "message": f"{len(categorias_no_comprometidas)} categorías eliminadas correctamente.",
-                "comprometidas": categorias_comprometidas
-            }), 200
+        if ingresos == 0 and egresos == 0:
+            no_usadas.append(cat)
         else:
-            return jsonify({"message": "No hay categorías no comprometidas para eliminar."}), 200
+            usadas.append({
+                'id': cat.id,
+                'nombre': cat.nombre,
+                'ingresos': ingresos,
+                'egresos': egresos
+            })
 
-    except Exception as e:
-        return jsonify({"error": "Error interno del servidor", "details": str(e)}), 500
+    for cat in no_usadas:
+        db.session.delete(cat)
 
-#---------------------------------------------------
+    db.session.commit()
+
+    return jsonify({
+        'msg': f'{len(no_usadas)} categorías eliminadas.',
+        'comprometidas': usadas
+    }), 200
+
+# POST: Insertar categorías por defecto
 @categorias_bp.route('/default', methods=['POST'])
 def insertar_categorias_por_defecto():
-    # Verificar si la tabla 'Categoria' está vacía
-    if db.session.query(Categoria).count() == 0:
-        # Insertar las categorías en la base de datos
-        try:
-            for categoria in default_categories:
-                default_categoria = Categoria(
-                    nombre=categoria['nombre'],
-                    icono=categoria['icono'],
+    try:
+        for cat in default_categories:
+            exists_query = Categoria.query.filter_by(nombre=cat['nombre'], is_default=True).first()
+            if not exists_query:
+                nueva = Categoria(
+                    nombre=cat['nombre'],
+                    icono=cat['icono'],
                     is_default=True,
                     user_id=None
                 )
-                
-                if not db.session.query(exists().where(Categoria.nombre == categoria['nombre'], Categoria.is_default == True)).scalar():
-                    db.session.add(default_categoria)
-            
-            db.session.commit()
-
-            return jsonify({"msg": "Categorías insertadas exitosamente"}), 201
-
-        except Exception as e:
-            db.session.rollback()
-            # Retornar un mensaje de error si ocurre una excepción
-            return jsonify({"error": "Hubo un error al insertar las categorías", "details": str(e)}), 500
-
-    # Si la tabla no está vacía, podrías retornar otro mensaje si es necesario
-    return jsonify({"msg": "Las categorías ya están presentes"}), 200
+                db.session.add(nueva)
+        db.session.commit()
+        return jsonify({'msg': 'Categorías por defecto insertadas'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': 'Error al insertar', 'detalles': str(e)}), 500

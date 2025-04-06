@@ -1,16 +1,21 @@
-from marshmallow import validates,ValidationError,fields,Schema
+# src/schemas/usuario_schema.py
 
-class UsuarioSchema(Schema):
-    nombre_usuario = fields.Str(required=True)
+from marshmallow import Schema, fields, validate, validates, ValidationError
+
+class UsuarioRegistroSchema(Schema):
+    nombre_usuario = fields.Str(required=True, validate=validate.Length(min=3, max=50))
     correo = fields.Email(required=True)
-    contrasena = fields.Str(required=True)
-    
-    @validates('nombre_usuario')
-    def validate_nombre_usuario(self,value):
-        if len(value) < 4:
-            raise ValidationError('El nombre de usuario debe tener al menos 4 caracteres')  
-        if len(value) > 50:
-            raise ValidationError('El nombre de usuario no puede tener más de 50 caracteres')
-        
-UsuarioSchema
-    
+    contrasena = fields.Str(required=True, load_only=True, validate=validate.Length(min=6))
+
+class UsuarioLoginSchema(Schema):
+    correo = fields.Email(required=True)
+    contrasena = fields.Str(required=True, load_only=True)
+
+class UsuarioRespuestaSchema(Schema):
+    id = fields.Int()
+    nombre_usuario = fields.Str()
+    correo = fields.Email()
+    capital_inicial = fields.Float()
+    capital_actual = fields.Float()
+    moneda = fields.Str()
+    creado_en = fields.DateTime()

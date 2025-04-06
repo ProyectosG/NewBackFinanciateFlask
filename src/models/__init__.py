@@ -1,6 +1,9 @@
-from flask_sqlalchemy import SQLAlchemy
-# Instanciar la base de datos
-db = SQLAlchemy()
+# src/models/__init__.py
 
-from .usuario_schema import UsuarioSchema
-from .categoria_schema import CategoriaSchema
+from src.app import db
+
+# Importar modelos aquí si querés tener acceso directo al usarlos en otras partes
+from .Categorias import Categoria
+from .Usuarios import Usuario
+from .Ingresos import Ingreso
+from .Egresos import Egreso
