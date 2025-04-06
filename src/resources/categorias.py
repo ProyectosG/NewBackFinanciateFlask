@@ -12,15 +12,21 @@ categorias_bp = Blueprint('categorias', __name__, url_prefix='/api/categorias')
 categoria_schema = CategoriaSchema()
 categorias_schema = CategoriaSchema(many=True)
 
+
+
 # GET: Traer todas las categorías (default + del usuario)
 @categorias_bp.route('/traertodas', methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def listar_categorias():
-    user_id = get_jwt_identity()
-    default = Categoria.query.filter_by(is_default=True).all()
-    personales = Categoria.query.filter_by(user_id=user_id).all()
-    all_categorias = sorted(default + personales, key=lambda c: c.nombre)
+   # user_id = get_jwt_identity()
+    #default = Categoria.query.filter_by(is_default=True).all()
+    all_categorias = Categoria.query.filter_by(is_default=True).all()
+    #personales = Categoria.query.filter_by(user_id=user_id).all()
+    #all_categorias = sorted(default + personales, key=lambda c: c.nombre)
+    
     return categorias_schema.jsonify(all_categorias), 200
+
+
 
 # POST: Crear nueva categoría
 @categorias_bp.route('/categoria', methods=['POST'])
