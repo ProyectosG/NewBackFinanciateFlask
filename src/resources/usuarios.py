@@ -142,7 +142,7 @@ def actualizar_usuario():
 
 
     db.session.commit()
-    return jsonify({'mimensaje': "Usuario actualizado exitosamente"}), 200
+    return jsonify({'msg': "Usuario actualizado exitosamente"}), 200
 
 
 # -----------------------------------------
