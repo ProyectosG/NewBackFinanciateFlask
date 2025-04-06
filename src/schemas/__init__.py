@@ -1,3 +1,4 @@
+from flask_sqlalchemy import SQLAlchemy
 # Instanciar la base de datos
 db = SQLAlchemy()
 
