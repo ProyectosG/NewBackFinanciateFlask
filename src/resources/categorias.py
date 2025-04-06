@@ -1,6 +1,7 @@
 # src/resources/categorias.py
 
 from flask import Blueprint, request, jsonify
+from flask import jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.models import db, Categoria, Ingreso, Egreso
 from src.schemas.categoria_schema import CategoriaSchema
@@ -18,13 +19,14 @@ categorias_schema = CategoriaSchema(many=True)
 @categorias_bp.route('/traertodas', methods=['GET'])
 #@jwt_required()
 def listar_categorias():
-   # user_id = get_jwt_identity()
+    #user_id = get_jwt_identity()
     #default = Categoria.query.filter_by(is_default=True).all()
     all_categorias = Categoria.query.filter_by(is_default=True).all()
     #personales = Categoria.query.filter_by(user_id=user_id).all()
     #all_categorias = sorted(default + personales, key=lambda c: c.nombre)
     
-    return categorias_schema.jsonify(all_categorias), 200
+    #return categorias_schema.jsonify(all_categorias), 200
+    return jsonify(categorias_schema.dump(all_categorias, many=True)), 200
 
 
 
