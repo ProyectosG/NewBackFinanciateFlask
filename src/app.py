@@ -36,6 +36,8 @@ def create_app():
     
     # Registrar los blueprints
     from src.resources.usuarios import usuarios_bp
+    from src.resources.categorias import categorias_bp
+    
     app.register_blueprint(usuarios_bp)
 
 
