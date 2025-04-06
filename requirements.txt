@@ -7,3 +7,5 @@ Flask-JWT-Extended
 Flask-CORS
 psycopg2
 marshmallow
+marshmallow-sqlalchemy
+
