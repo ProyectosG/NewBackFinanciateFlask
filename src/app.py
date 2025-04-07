@@ -23,7 +23,7 @@ def create_app():
     migrate.init_app(app, db)
     jwt.init_app(app)
     #CORS(app)  # Permitir solicitudes de todos los orígenes
-    CORS(app, origins=["https://reliable-sorbet-07d22a.netlify.app"], supports_credentials=True)
+    CORS(app, origins=["https://financiatefront.netlify.app/"], supports_credentials=True)
 
 
     # Importar los modelos (esto es clave)
