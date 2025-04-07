@@ -14,7 +14,7 @@ login_schema = UsuarioLoginSchema()
 respuesta_schema = UsuarioRespuestaSchema()
 
 # Registrar nuevo usuario
-@usuarios_bp.route('/registro', methods=['POST'])
+@usuarios_bp.route('/signup', methods=['POST'])
 def registrar_usuario():
     data = request.get_json()
     errores = registro_schema.validate(data)
