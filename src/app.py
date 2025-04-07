@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+import click
+from flask.cli import with_appcontext
 
 
 # Instanciamos la base de datos y las migraciones
@@ -23,7 +25,7 @@ def create_app():
     migrate.init_app(app, db)
     jwt.init_app(app)
     #CORS(app)  # Permitir solicitudes de todos los orígenes
-    CORS(app, origins=["https://financiatefront.netlify.app/"], supports_credentials=True)
+    CORS(app, origins=["https://financiatefront.netlify.app"], supports_credentials=True)
 
 
     # Importar los modelos (esto es clave)
@@ -44,6 +46,14 @@ def create_app():
     app.register_blueprint(categorias_bp)
     
 
-
+    # Registrar comandos personalizados
+    app.cli.add_command(create_db)
 
     return app
+
+@click.command(name='create_db')
+@with_appcontext
+def create_db():
+    db.drop_all()
+    db.create_all()
+    print("Base de datos reiniciada correctamente")
