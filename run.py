@@ -1,3 +1,4 @@
+#run.py
 from src.app import create_app
 
 # Crear la aplicación

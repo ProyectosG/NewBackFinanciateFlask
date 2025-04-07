@@ -1,3 +1,4 @@
+#src/app.py
 from flask import Flask
 from src.config import Config
 from flask_sqlalchemy import SQLAlchemy

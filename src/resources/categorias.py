@@ -7,6 +7,7 @@ from src.models import db, Categoria, Ingreso, Egreso
 from src.schemas.categoria_schema import CategoriaSchema
 from .default_categories import default_categories
 from sqlalchemy import exists
+from marshmallow import ValidationError
 
 categorias_bp = Blueprint('categorias', __name__, url_prefix='/api/categorias')
 
@@ -17,29 +18,30 @@ categorias_schema = CategoriaSchema(many=True)
 
 # GET: Traer todas las categorías (default + del usuario)
 @categorias_bp.route('/traertodas', methods=['GET'])
-#@jwt_required()
+@jwt_required()
 def listar_categorias():
-    #user_id = get_jwt_identity()
-    #default = Categoria.query.filter_by(is_default=True).all()
-    all_categorias = Categoria.query.filter_by(is_default=True).all()
-    #personales = Categoria.query.filter_by(user_id=user_id).all()
-    #all_categorias = sorted(default + personales, key=lambda c: c.nombre)
+    user_id = get_jwt_identity()
+    default = Categoria.query.filter_by(is_default=True).all()
+    personales = Categoria.query.filter_by(user_id=user_id).all()
+    all_categorias = sorted(default + personales, key=lambda c: c.nombre)
     
-    #return categorias_schema.jsonify(all_categorias), 200
     return jsonify(categorias_schema.dump(all_categorias, many=True)), 200
 
 
 
 # POST: Crear nueva categoría
+from marshmallow import ValidationError
+
 @categorias_bp.route('/categoria', methods=['POST'])
 @jwt_required()
 def crear_categoria():
     user_id = get_jwt_identity()
-    data = request.get_json()
+    try:
+        data = categoria_schema.load(request.get_json())  # <-- validación automática
+    except ValidationError as err:
+        return jsonify({'errors': err.messages}), 400
 
-    if not data or 'nombre' not in data or 'icono' not in data:
-        return jsonify({'error': 'Campos requeridos: nombre, icono'}), 400
-
+    # Verificar duplicado (esto sigue igual)
     if Categoria.query.filter_by(nombre=data['nombre'], user_id=user_id).first():
         return jsonify({'error': 'La categoría ya existe'}), 400
 
@@ -49,9 +51,11 @@ def crear_categoria():
         user_id=user_id,
         is_default=False
     )
+
     db.session.add(nueva_categoria)
     db.session.commit()
     return categoria_schema.jsonify(nueva_categoria), 201
+
 
 # DELETE: Eliminar una categoría
 @categorias_bp.route('/categoria', methods=['DELETE'])
