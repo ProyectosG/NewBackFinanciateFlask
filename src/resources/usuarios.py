@@ -74,6 +74,8 @@ def perfil_usuario():
 @usuarios_bp.route('/config-inicial', methods=['PUT'])
 def config_local():
     data = request.get_json()
+    return jsonify({"data": data}), 200
+
     errores = config_schema.validate(data)
     if errores:
         return jsonify({"errores": errores}), 400

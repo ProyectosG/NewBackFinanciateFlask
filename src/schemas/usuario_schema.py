@@ -30,7 +30,3 @@ class UsuarioConfiguracionSchema(Schema):
         if value <= 0:
             raise ValidationError("El capital inicial debe ser mayor que cero.")
     
-    @validates('capital_actual')
-    def validar_capital_actual(self, value):
-        if value < 0:
-            raise ValidationError("El capital actual no puede ser negativo.")
