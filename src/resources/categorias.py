@@ -42,7 +42,7 @@ def listar_categorias():
             'nombre': categoria.nombre,
             'icono': categoria.icono,
             'is_default': categoria.is_default,
-            'user_id': categoria.user_id,
+            #'user_id': categoria.user_id,
             'created_at': categoria.created_at.isoformat()  # Convertir a string
         }
         categorias_list.append(categoria_dict)
