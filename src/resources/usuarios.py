@@ -70,7 +70,7 @@ def perfil_usuario():
 
 #asignar los valores iniciales a un usuairo creado pero que se loguea por primera vez.
 #es decir que su capitla inicial y su moneda esten vacios.
-@usuarios_bp.roue('/config-inicial', methods=['POST'])
+@usuarios_bp.route('/config-inicial', methods=['POST'])
 def config_local():
     data = request.get_json()
     errores = UsuarioConfiguracionSchema().validate(data)
