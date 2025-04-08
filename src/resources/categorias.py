@@ -18,10 +18,9 @@ categorias_schema = CategoriaSchema(many=True)
 
 # GET: Traer todas las categorías (default + del usuario)
 @categorias_bp.route('/traertodas', methods=['GET'])
-#@jwt_required()
+@jwt_required()
 def listar_categorias():
-    #user_id = get_jwt_identity()
-    user_id =1
+    user_id = get_jwt_identity()
     if not user_id:
         return jsonify({"msg": "Token inválido o expirado"}), 401
 
