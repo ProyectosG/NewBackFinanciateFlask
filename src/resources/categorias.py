@@ -21,14 +21,35 @@ categorias_schema = CategoriaSchema(many=True)
 @jwt_required()
 def listar_categorias():
     user_id = get_jwt_identity()
+
     if not user_id:
         return jsonify({"msg": "Token inválido o expirado"}), 401
-    
+
+    # Obtener categorías predeterminadas
     default = Categoria.query.filter_by(is_default=True).all()
-    #personales = Categoria.query.filter_by(user_id=user_id).all()
-    #all_categorias = sorted(default + personales, key=lambda c: c.nombre)
-    
-    return jsonify(categorias_schema.dump(default, many=True)), 200
+
+    # Obtener categorías asociadas al usuario
+    personales = Categoria.query.filter_by(user_id=user_id).all()
+
+    # Combinar las listas de categorías (predeterminadas + personales)
+    all_categorias = sorted(default + personales, key=lambda c: c.nombre)
+
+    # Convertir manualmente los objetos a diccionarios
+    categorias_list = []
+    for categoria in all_categorias:
+        categoria_dict = {
+            'id': categoria.id,
+            'nombre': categoria.nombre,
+            'icono': categoria.icono,
+            'is_default': categoria.is_default,
+            'user_id': categoria.user_id,
+            'created_at': categoria.created_at.isoformat()  # Convertir a string
+        }
+        categorias_list.append(categoria_dict)
+
+    # Retornar las categorías como una respuesta JSON
+    return jsonify(categorias_list), 200
+
 
 
 
