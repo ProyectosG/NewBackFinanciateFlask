@@ -19,3 +19,18 @@ class UsuarioRespuestaSchema(Schema):
     capital_actual = fields.Float()
     moneda = fields.Str()
     creado_en = fields.DateTime()
+
+class UsuarioConfiguracionSchema(Schema):
+    capital_inicial = fields.Float(required=True)
+    capital_actual = fields.Float(required=True)
+    moneda = fields.Str(required=True, validate=validate.length(min=3, max=10))
+    
+    @validates('capital_inicial')
+    def validar_capital_inicial(self, value):
+        if value <= 0:
+            raise ValidationError("El capital inicial debe ser mayor que cero.")
+    
+    @validates('capital_actual')
+    def validar_capital_actual(self, value):
+        if value < 0:
+            raise ValidationError("El capital actual no puede ser negativo.")

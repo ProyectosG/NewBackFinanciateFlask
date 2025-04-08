@@ -3,7 +3,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from src.models import db, Usuario
-from src.schemas.usuario_schema import UsuarioRegistroSchema, UsuarioLoginSchema, UsuarioRespuestaSchema
+from src.schemas.usuario_schema import UsuarioRegistroSchema, UsuarioLoginSchema, UsuarioRespuestaSchema,UsuarioConfiguracionSchema
 from sqlalchemy import exists
 from datetime import timedelta
 
@@ -53,6 +53,7 @@ def login_usuario():
 
     return jsonify({"token": token, "usuario": respuesta_schema.dump(usuario)}), 200
 
+
 # Obtener perfil (protegido)
 @usuarios_bp.route('/perfil', methods=['GET'])
 @jwt_required()
@@ -63,3 +64,29 @@ def perfil_usuario():
         return jsonify({"msg": "Usuario no encontrado"}), 404
 
     return jsonify(respuesta_schema.dump(usuario)), 200
+
+
+
+
+#asignar los valores iniciales a un usuairo creado pero que se loguea por primera vez.
+#es decir que su capitla inicial y su moneda esten vacios.
+@usuarios_bp.roue('/config-inicial', methods=['POST'])
+def config_local():
+    data = request.get_json()
+    errores = UsuarioConfiguracionSchema().validate(data)
+    if errores:
+        return jsonify({"errores": errores}), 400
+    
+    usuario =db.session.query(Usuario).filter(usuario.correo== data['correo']).first()
+    if not usuario:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+    
+
+
+    usuario.capital_inicial = data['capital_inicial']
+    usuario.capital_actual = data['capital_actual']
+    usuario.moneda = data['moneda']
+
+    db.session.commit()
+
+    return jsonify({"msg": "Configuración local actualizada"}), 200     
