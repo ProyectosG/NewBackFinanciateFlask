@@ -55,6 +55,37 @@ def login_usuario():
     return jsonify({"token": token, "usuario": respuesta_schema.dump(usuario)}), 200
 
 
+#asignar los valores iniciales a un usuario creado pero que se loguea por primera vez.
+#es decir que su capital inicial y su moneda esten vacios.
+@usuarios_bp.route('/config-inicial', methods=['PUT'])
+@jwt_required
+def config_local():
+    data = request.get_json()
+
+    errores = config_schema.validate(data)
+    if errores:
+        return jsonify({"errores": errores}), 400
+
+    usuario_id = get_jwt_identity()
+    usuario = Usuario.query.get(usuario_id)
+
+    if not usuario:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+    
+
+    usuario.capital_inicial = data['capital_inicial']
+    usuario.capital_actual = data['capital_inicial']
+    usuario.moneda = data['moneda']
+
+    db.session.commit()
+
+    return jsonify({"msg": "Configuración local actualizada"}), 200     
+
+
+
+
+
+
 # Obtener perfil (protegido)
 @usuarios_bp.route('/perfil', methods=['GET'])
 @jwt_required()
@@ -68,27 +99,3 @@ def perfil_usuario():
 
 
 
-
-#asignar los valores iniciales a un usuario creado pero que se loguea por primera vez.
-#es decir que su capital inicial y su moneda esten vacios.
-@usuarios_bp.route('/config-inicial', methods=['PUT'])
-def config_local():
-    data = request.get_json()
-
-    errores = config_schema.validate(data)
-    if errores:
-        return jsonify({"errores": errores}), 400
-
-    usuario = db.session.query(Usuario).filter(Usuario.correo == data['correo']).first()
-
-    if not usuario:
-        return jsonify({"msg": "Usuario no encontrado"}), 404
-    
-
-    usuario.capital_inicial = data['capital_inicial']
-    usuario.capital_actual = data['capital_inicial']
-    usuario.moneda = data['moneda']
-
-    db.session.commit()
-
-    return jsonify({"msg": "Configuración local actualizada"}), 200     
