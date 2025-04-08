@@ -25,10 +25,10 @@ def listar_categorias():
         return jsonify({"msg": "Token inválido o expirado"}), 401
     
     default = Categoria.query.filter_by(is_default=True).all()
-    personales = Categoria.query.filter_by(user_id=user_id).all()
-    all_categorias = sorted(default + personales, key=lambda c: c.nombre)
+    #personales = Categoria.query.filter_by(user_id=user_id).all()
+    #all_categorias = sorted(default + personales, key=lambda c: c.nombre)
     
-    return jsonify(categorias_schema.dump(all_categorias, many=True)), 200
+    return jsonify(categorias_schema.dump(default, many=True)), 200
 
 
 
