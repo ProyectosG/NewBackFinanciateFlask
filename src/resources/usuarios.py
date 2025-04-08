@@ -69,12 +69,11 @@ def perfil_usuario():
 
 
 
-#asignar los valores iniciales a un usuairo creado pero que se loguea por primera vez.
-#es decir que su capitla inicial y su moneda esten vacios.
+#asignar los valores iniciales a un usuario creado pero que se loguea por primera vez.
+#es decir que su capital inicial y su moneda esten vacios.
 @usuarios_bp.route('/config-inicial', methods=['PUT'])
 def config_local():
     data = request.get_json()
-    return jsonify({"data": data}), 200
 
     errores = config_schema.validate(data)
     if errores:
@@ -85,7 +84,6 @@ def config_local():
     if not usuario:
         return jsonify({"msg": "Usuario no encontrado"}), 404
     
-
 
     usuario.capital_inicial = data['capital_inicial']
     usuario.capital_actual = data['capital_inicial']
