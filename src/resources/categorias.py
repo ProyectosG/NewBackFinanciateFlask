@@ -21,6 +21,9 @@ categorias_schema = CategoriaSchema(many=True)
 @jwt_required()
 def listar_categorias():
     user_id = get_jwt_identity()
+    if not user_id:
+        return jsonify({"msg": "Token inválido o expirado"}), 401
+    
     default = Categoria.query.filter_by(is_default=True).all()
     personales = Categoria.query.filter_by(user_id=user_id).all()
     all_categorias = sorted(default + personales, key=lambda c: c.nombre)
@@ -30,8 +33,6 @@ def listar_categorias():
 
 
 # POST: Crear nueva categoría
-from marshmallow import ValidationError
-
 @categorias_bp.route('/categoria', methods=['POST'])
 @jwt_required()
 def crear_categoria():
