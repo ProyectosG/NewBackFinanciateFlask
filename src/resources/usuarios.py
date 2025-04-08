@@ -50,7 +50,7 @@ def login_usuario():
     if not usuario or not usuario.verificar_contrasena(data['contrasena']):
         return jsonify({"msg": "Credenciales inválidas"}), 401
 
-    token = create_access_token(identity=usuario.id, expires_delta=timedelta(days=7))
+    token = create_access_token(identity=str(usuario.id), expires_delta=timedelta(days=7))
 
     return jsonify({"token": token, "usuario": respuesta_schema.dump(usuario)}), 200
 
@@ -66,7 +66,7 @@ def config_local():
     if errores:
         return jsonify({"errores": errores}), 400
 
-    usuario_id = get_jwt_identity()
+    usuario_id = int(get_jwt_identity())
     usuario = Usuario.query.get(usuario_id)
 
     if not usuario:
@@ -90,7 +90,7 @@ def config_local():
 @usuarios_bp.route('/perfil', methods=['GET'])
 @jwt_required()
 def perfil_usuario():
-    usuario_id = get_jwt_identity()
+    usuario_id = int(get_jwt_identity())
     usuario = Usuario.query.get(usuario_id)
     if not usuario:
         return jsonify({"msg": "Usuario no encontrado"}), 404

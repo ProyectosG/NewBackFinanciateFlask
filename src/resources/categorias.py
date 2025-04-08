@@ -20,7 +20,7 @@ categorias_schema = CategoriaSchema(many=True)
 @categorias_bp.route('/traertodas', methods=['GET'])
 @jwt_required()
 def listar_categorias():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     if not user_id:
         return jsonify({"msg": "Token inválido o expirado"}), 401
 
@@ -56,7 +56,7 @@ def listar_categorias():
 @categorias_bp.route('/categoria', methods=['POST'])
 @jwt_required()
 def crear_categoria():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     try:
         data = categoria_schema.load(request.get_json())  # <-- validación automática
     except ValidationError as err:
