@@ -77,8 +77,9 @@ def config_local():
     # errores = config_schema.validate(data)
     # if errores:
     #     return jsonify({"errores": errores}), 400
-    
-    usuario =db.session.query(Usuario).filter(usuario.correo== data['correo']).first()
+
+    usuario = db.session.query(Usuario).filter(Usuario.correo == data['correo']).first()
+
     if not usuario:
         return jsonify({"msg": "Usuario no encontrado"}), 404
     
