@@ -86,7 +86,7 @@ def config_local():
 
 
     usuario.capital_inicial = data['capital_inicial']
-    usuario.capital_actual = data['capital_actual']
+    usuario.capital_actual = data['capital_inicial']
     usuario.moneda = data['moneda']
 
     db.session.commit()
