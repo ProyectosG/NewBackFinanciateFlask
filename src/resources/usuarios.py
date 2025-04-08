@@ -12,6 +12,7 @@ usuarios_bp = Blueprint('usuarios', __name__, url_prefix='/api/usuarios')
 registro_schema = UsuarioRegistroSchema()
 login_schema = UsuarioLoginSchema()
 respuesta_schema = UsuarioRespuestaSchema()
+config_schema = UsuarioConfiguracionSchema()
 
 # Registrar nuevo usuario
 @usuarios_bp.route('/signup', methods=['POST'])
@@ -73,7 +74,7 @@ def perfil_usuario():
 @usuarios_bp.route('/config-inicial', methods=['POST'])
 def config_local():
     data = request.get_json()
-    errores = UsuarioConfiguracionSchema().validate(data)
+    errores = config_schema().validate(data)
     if errores:
         return jsonify({"errores": errores}), 400
     
