@@ -58,7 +58,7 @@ def login_usuario():
 #asignar los valores iniciales a un usuario creado pero que se loguea por primera vez.
 #es decir que su capital inicial y su moneda esten vacios.
 @usuarios_bp.route('/config-inicial', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def config_local():
     data = request.get_json()
 
