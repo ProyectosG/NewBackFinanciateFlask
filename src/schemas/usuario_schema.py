@@ -23,7 +23,7 @@ class UsuarioRespuestaSchema(Schema):
 class UsuarioConfiguracionSchema(Schema):
     capital_inicial = fields.Float(required=True)
     capital_actual = fields.Float(required=True)
-    moneda = fields.Str(required=True, validate=validate.length(min=3, max=10))
+    moneda = fields.Str(required=True, validate=validate.Length(min=3, max=10))
     
     @validates('capital_inicial')
     def validar_capital_inicial(self, value):
