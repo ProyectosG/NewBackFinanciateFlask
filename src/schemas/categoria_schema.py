@@ -11,7 +11,6 @@ class CategoriaSchema(SQLAlchemyAutoSchema):
 
     class Meta:
         model = Categoria
-        load_instance = True
         include_fk = True
 
 # Instancia para uso
