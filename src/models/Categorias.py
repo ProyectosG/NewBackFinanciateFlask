@@ -5,8 +5,8 @@ from src.app import db
 class Categoria(db.Model):
     __tablename__ = 'categorias'  # Especifica explícitamente el nombre de la tabla
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(50), nullable=False, unique=True)
-    icono = db.Column(db.String(10), nullable=False, unique=True)
+    nombre = db.Column(db.String(50), nullable=False, unique=False)
+    icono = db.Column(db.String(10), nullable=False, unique=False)
     is_default = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

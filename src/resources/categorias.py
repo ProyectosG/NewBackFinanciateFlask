@@ -49,7 +49,6 @@ def listar_categorias():
     # Retornar las categorías como una respuesta JSON
     return jsonify(categorias_list), 200
 
-
 @categorias_bp.route('/categoria', methods=['POST'])
 @jwt_required()
 def crear_categoria():
@@ -60,12 +59,18 @@ def crear_categoria():
     except ValidationError as err:
         return jsonify({'errors': err.messages}), 400
 
-    if Categoria.query.filter_by(nombre=data.nombre, user_id=user_id).first():
+    nombre = data['nombre']
+    icono = data['icono']
+
+    if Categoria.query.filter_by(nombre=nombre, user_id=user_id).first():
         return jsonify({'error': 'La categoría ya existe'}), 400
 
+    if Categoria.query.filter_by(icono=icono, user_id=user_id).first():
+        return jsonify({'error': 'Este icono ya está en uso'}), 400
+
     nueva_categoria = Categoria(
-        nombre=data.nombre,
-        icono=data.icono,
+        nombre=nombre,
+        icono=icono,
         user_id=user_id,
         is_default=False
     )
@@ -74,6 +79,8 @@ def crear_categoria():
     db.session.commit()
 
     return jsonify(categoria_schema.dump(nueva_categoria)), 201
+
+
 
 
 
