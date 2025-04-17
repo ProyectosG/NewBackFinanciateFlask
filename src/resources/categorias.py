@@ -51,18 +51,15 @@ def listar_categorias():
 
 
 
-
-# POST: Crear nueva categoría
 @categorias_bp.route('/categoria', methods=['POST'])
 @jwt_required()
 def crear_categoria():
     user_id = int(get_jwt_identity())
     try:
-        data = categoria_schema.load(request.get_json())  # <-- validación automática
+        data = categoria_schema.load(request.get_json(), session=db.session)  # <-- aquí el cambio
     except ValidationError as err:
         return jsonify({'errors': err.messages}), 400
 
-    # Verificar duplicado (esto sigue igual)
     if Categoria.query.filter_by(nombre=data['nombre'], user_id=user_id).first():
         return jsonify({'error': 'La categoría ya existe'}), 400
 
