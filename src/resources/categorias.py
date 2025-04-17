@@ -48,7 +48,6 @@ def listar_categorias():
 
     # Retornar las categorías como una respuesta JSON
     return jsonify(categorias_list), 200
-
 @categorias_bp.route('/categoria', methods=['POST'])
 @jwt_required()
 def crear_categoria():
@@ -71,7 +70,9 @@ def crear_categoria():
 
     db.session.add(nueva_categoria)
     db.session.commit()
-    return categoria_schema.jsonify(nueva_categoria), 201
+
+    return jsonify(categoria_schema.dump(nueva_categoria)), 201
+
 
 
 # DELETE: Eliminar una categoría
