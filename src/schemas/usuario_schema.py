@@ -1,5 +1,6 @@
 # src/schemas/usuario_schema.py
-from marshmallow import Schema, fields, validates, ValidationError, validate
+
+from marshmallow import Schema, fields, validate, ValidationError, validates
 
 class UsuarioRegistroSchema(Schema):
     nombre_usuario = fields.Str(required=True, validate=validate.Length(min=3, max=50))
@@ -24,6 +25,6 @@ class UsuarioConfiguracionSchema(Schema):
     moneda = fields.Str(required=True, validate=validate.Length(min=3, max=10))
 
     @validates('capital_inicial')
-    def validar_capital_inicial(self, value):
+    def validar_valor_capital_inicial(self, value):
         if value <= 0:
             raise ValidationError("El capital inicial debe ser mayor que cero.")
