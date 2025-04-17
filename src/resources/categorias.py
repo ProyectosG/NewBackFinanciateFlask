@@ -60,7 +60,7 @@ def crear_categoria():
     except ValidationError as err:
         return jsonify({'errors': err.messages}), 400
 
-    if Categoria.query.filter_by(nombre=data['nombre'], user_id=user_id).first():
+    if Categoria.query.filter_by(nombre=data.nombre, user_id=user_id).first():
         return jsonify({'error': 'La categoría ya existe'}), 400
 
     nueva_categoria = Categoria(
