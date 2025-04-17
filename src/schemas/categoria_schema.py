@@ -1,7 +1,7 @@
 # src/schemas/categoria_schema.py
-from marshmallow import Schema, fields, validate
-from src.models.Categorias import Categoria
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow import fields, validate
+from src.models.Categorias import Categoria
 
 class CategoriaSchema(SQLAlchemyAutoSchema):
     nombre = fields.String(required=True, validate=validate.Length(min=2, max=50))
@@ -13,3 +13,7 @@ class CategoriaSchema(SQLAlchemyAutoSchema):
         model = Categoria
         load_instance = True
         include_fk = True
+
+# Instancia para uso
+categoria_schema = CategoriaSchema()
+categorias_schema = CategoriaSchema(many=True)

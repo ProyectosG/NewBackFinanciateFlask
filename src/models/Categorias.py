@@ -20,6 +20,6 @@ class Categoria(db.Model):
             'nombre': self.nombre,
             'icono': self.icono,
             'is_default': self.is_default,
-            'usuario_id': self.user_id,
+            'user_id': self.user_id,  # <--- no usuario_id
             'created_at': self.created_at.isoformat()
-        }
+    }
