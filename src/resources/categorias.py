@@ -48,6 +48,8 @@ def listar_categorias():
 
     # Retornar las categorías como una respuesta JSON
     return jsonify(categorias_list), 200
+
+
 @categorias_bp.route('/categoria', methods=['POST'])
 @jwt_required()
 def crear_categoria():
