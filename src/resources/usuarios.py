@@ -6,6 +6,8 @@ from src.models import db, Usuario
 from src.schemas.usuario_schema import UsuarioRegistroSchema, UsuarioLoginSchema, UsuarioRespuestaSchema,UsuarioConfiguracionSchema
 from sqlalchemy import exists
 from datetime import timedelta
+from marshmallow import ValidationError
+
 
 usuarios_bp = Blueprint('usuarios', __name__, url_prefix='/api/usuarios')
 
@@ -61,10 +63,11 @@ def login_usuario():
 @jwt_required()
 def config_local():
     data = request.get_json()
+    try:
+        datos_validos = config_schema.load(data)
+    except ValidationError as err:
+        return jsonify({"errores": err.messages}), 400
 
-    errores = config_schema.validate(data)
-    if errores:
-        return jsonify({"errores": errores}), 400
 
     usuario_id = int(get_jwt_identity())
     usuario = Usuario.query.get(usuario_id)
@@ -73,9 +76,10 @@ def config_local():
         return jsonify({"msg": "Usuario no encontrado"}), 404
     
 
-    usuario.capital_inicial = data['capital_inicial']
-    usuario.capital_actual = data['capital_inicial']
-    usuario.moneda = data['moneda']
+    usuario.capital_inicial = datos_validos['capital_inicial']
+    usuario.capital_actual = datos_validos['capital_inicial']
+    usuario.moneda = datos_validos['moneda']
+
 
     db.session.commit()
 
