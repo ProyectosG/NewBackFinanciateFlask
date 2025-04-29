@@ -41,11 +41,12 @@ def create_app():
     # Registrar los blueprints
     from src.resources.usuarios import usuarios_bp
     from src.resources.categorias import categorias_bp
+    from src.resources.fondos_emergencia import fondos_emergencia_bp
 
     app.register_blueprint(usuarios_bp)
     app.register_blueprint(categorias_bp)
+    app.register_blueprint(fondos_emergencia_bp)
     
-
     # Registrar comandos personalizados
     app.cli.add_command(create_db)
 
