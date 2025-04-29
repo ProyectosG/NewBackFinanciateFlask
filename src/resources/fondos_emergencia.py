@@ -1,6 +1,6 @@
 #PARA RADO
 from flask import Blueprint, request, jsonify
-from src.models import db, FondoEmergencias
+from src.models import db, FondoEmergencia
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 #--------------------------------------------------------------
@@ -13,7 +13,7 @@ fondos_emergencia_bp = Blueprint('fondos_emergencia', __name__, url_prefix='/api
 def obtener_fondo_emergencia_activo():
     usuario_id = int(get_jwt_identity())
 
-    fondo = FondoEmergencias.query.filter_by(usuario_id=usuario_id).first()
+    fondo = FondoEmergencia.query.filter_by(usuario_id=usuario_id).first()
 
     if not fondo:
         return jsonify({'msg': 'No se encontró un fondo de emergencia para este usuario.'}), 200
@@ -39,7 +39,7 @@ def crear_fondo_emergencia():
 
     usuario_id = int(get_jwt_identity())
 
-    nuevo_fondo = FondoEmergencias(
+    nuevo_fondo = FondoEmergencia(
         monto=monto,
         monto_actual=0.0,
         razon=razon,
@@ -47,7 +47,7 @@ def crear_fondo_emergencia():
     )
     db.session.add(nuevo_fondo)
     db.session.commit()
-    emergency = FondoEmergencias.query.filter_by(usuario_id=usuario_id).first()
+    emergency = FondoEmergencia.query.filter_by(usuario_id=usuario_id).first()
 
     return jsonify({'msg': 'Fondo de emergencia creado exitosamente.', 'id':emergency.id}), 201
 
@@ -58,7 +58,7 @@ def eliminar_fondo_emergencia():
     usuario_id = int(get_jwt_identity);
     datos = request.get_json()
     id_emergencia = datos["id"]
-    fondo = FondoEmergencias.query.filter_by(id=id_emergencia, usuario_id=usuario_id).first()
+    fondo = FondoEmergencia.query.filter_by(id=id_emergencia, usuario_id=usuario_id).first()
     if not fondo:
         return jsonify({'msg': 'No se encontró un fondo de emergencia para este usuario.'}), 404
 
