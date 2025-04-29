@@ -7,3 +7,4 @@ from .Categorias import Categoria
 from .Usuarios import Usuario
 from .Ingresos import Ingreso
 from .Egresos import Egreso
+from .FondoEmergencias import FondoEmergencia
