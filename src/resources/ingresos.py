@@ -5,7 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import date
 
 #--------------------------------------------
-ingresos_bp = Blueprint('ingresos', __name__,"/api/ingresos")
+ingresos_bp = Blueprint('ingresos', __name__,url_prefix = "/api/ingresos")
 #--------------------------------------------
 
 # Ruta para obtener ingresos
