@@ -228,7 +228,7 @@ def obtener_planes_ahorro():
 #---------------------------------------------------------
 @plandeahorro_bp.route('/depositar', methods=['POST'])
 @jwt_required()
-def registrar_deposito_plan(payload):
+def registrar_deposito_plan():
     usuario_id = int(get_jwt_identity())
 
     #Registra un monto hacia un plan de ahorro y crea un egreso asociado.
@@ -242,8 +242,8 @@ def registrar_deposito_plan(payload):
     fecha = data.get('fecha')
 
     # Validar datos requeridos
-    if not usuario_id or not plan_id or not monto_ahorro or not fecha:
-        return jsonify({"error": "Faltan datos requeridos (usuario_id, plan_id, nombre_plan,monto_monto_ahorro,fecha)"}), 400
+    if not plan_id or not monto_ahorro or not fecha:
+        return jsonify({"error": "Faltan datos requeridos (plan_id, nombre_plan,monto_monto_ahorro,fecha)"}), 400
 
     # Buscar la categoría "Plan de Ahorro"  
     categoria_plan_ahorro = Categoria.query.filter_by(nombre="Plan de ahorro").first()
