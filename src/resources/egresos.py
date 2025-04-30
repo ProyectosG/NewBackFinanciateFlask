@@ -10,7 +10,7 @@ egresos_bp = Blueprint('egresos', __name__,url_prefix ="/api/egresos")
 # CRUD para Egreso
 @egresos_bp.route('/', methods=['GET'])
 @jwt_required()
-def obtener_egresos(payload):
+def obtener_egresos():
     usuario_id = int(get_jwt_identity())
 
     try:    
@@ -39,7 +39,7 @@ def obtener_egresos(payload):
 
 #----------------------------------------------------------------------------------------
 # Ruta para crear un EGRESO
-@egresos_bp.route('/agrega_egreso', methods=['POST'])
+@egresos_bp.route('/', methods=['POST'])
 @jwt_required()
 def crear_egreso():
     data = request.get_json()
