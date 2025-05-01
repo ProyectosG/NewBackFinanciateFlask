@@ -28,7 +28,7 @@ def obtener_fondo_emergencia_activo():
 
 
 @fondos_emergencia_bp.route('/', methods=['POST'])
-@jwt_required
+@jwt_required()
 def crear_fondo_emergencia():
     datos = request.get_json()
     monto = datos.get('monto')
