@@ -20,7 +20,7 @@ def obtener_suscripciones():
 # ------------------------------------------------------
 # Ruta para crear una nueva suscripción
 @suscripciones_bp.route('/', methods=['POST'])
-@jwt_required
+@jwt_required()
 def crear_suscripcion():
     usuario_id = int(get_jwt_identity())
     
@@ -74,7 +74,7 @@ def eliminar_suscripcion():
 # ------------------------------------------------------
 # Ruta para registrar el pago de una suscripción como egreso
 @suscripciones_bp.route('/pagos', methods=['POST'])
-@jwt_required
+@jwt_required()
 def pagar_suscripcion():
     usuario_id =int(get_jwt_identity())
     
