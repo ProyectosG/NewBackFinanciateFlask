@@ -47,6 +47,7 @@ def create_app():
     from src.resources.planahorro import plandeahorro_bp
     from src.resources.ingresos import ingresos_bp
     from src.resources.egresos import egresos_bp
+    from src.resources.suscripciones import suscripciones_bp
 
     app.register_blueprint(usuarios_bp)
     app.register_blueprint(categorias_bp)
@@ -54,6 +55,7 @@ def create_app():
     app.register_blueprint(plandeahorro_bp)
     app.register_blueprint(ingresos_bp)
     app.register_blueprint(egresos_bp)
+    app.register_blueprint(suscripciones_bp)
     
     # Registrar comandos personalizados
     app.cli.add_command(create_db)
