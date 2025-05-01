@@ -1,4 +1,5 @@
-#PARA RADO
+#src.resources.fondos_emergencia
+#PENDIENTES. validar que cuando se registre el monto del fondo asegurarse que el capital_actual sea mayor que el fondo deseado.
 from flask import Blueprint, request, jsonify
 from src.models import db, FondoEmergencia
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -55,7 +56,7 @@ def crear_fondo_emergencia():
 @fondos_emergencia_bp.route('/', methods=['DELETE'])
 @jwt_required()
 def eliminar_fondo_emergencia():
-    usuario_id = int(get_jwt_identity);
+    usuario_id = int(get_jwt_identity());
     datos = request.get_json()
     id_emergencia = datos["id"]
     fondo = FondoEmergencia.query.filter_by(id=id_emergencia, usuario_id=usuario_id).first()
